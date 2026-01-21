@@ -1,0 +1,276 @@
+name: Dependency Audit
+
+on:
+  # Run on push to main branches
+  push:
+    branches: [ main, master, develop ]
+
+  # Run on pull requests
+  pull_request:
+    branches: [ main, master, develop ]
+
+  # Run weekly on Mondays at 9 AM UTC
+  schedule:
+    - cron: '0 9 * * 1'
+
+  # Allow manual triggering
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  # Node.js audit
+  nodejs-audit:
+    name: Node.js Dependency Audit
+    runs-on: ubuntu-latest
+    if: hashFiles('**/package.json') != ''
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for outdated packages
+        run: |
+          echo "## Outdated Packages" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          npm outdated >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Run npm audit
+        run: |
+          echo "## Security Audit" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          npm audit >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Check bundle size
+        run: |
+          SIZE=$(du -sh node_modules/ | cut -f1)
+          echo "## Bundle Size" >> $GITHUB_STEP_SUMMARY
+          echo "node_modules: $SIZE" >> $GITHUB_STEP_SUMMARY
+
+  # Python audit
+  python-audit:
+    name: Python Dependency Audit
+    runs-on: ubuntu-latest
+    if: hashFiles('**/requirements.txt', '**/Pipfile', '**/pyproject.toml') != ''
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install audit tools
+        run: |
+          pip install safety pip-audit
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Check for outdated packages
+        run: |
+          echo "## Outdated Packages" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          pip list --outdated >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Run Safety check
+        run: |
+          echo "## Safety Security Scan" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          safety check >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Run pip-audit
+        run: |
+          echo "## pip-audit Security Scan" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          pip-audit >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  # Rust audit
+  rust-audit:
+    name: Rust Dependency Audit
+    runs-on: ubuntu-latest
+    if: hashFiles('**/Cargo.toml') != ''
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+
+      - name: Install cargo-outdated
+        run: cargo install cargo-outdated
+
+      - name: Check for outdated packages
+        run: |
+          echo "## Outdated Packages" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cargo outdated >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Run cargo audit
+        run: |
+          echo "## Security Audit" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cargo audit >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Check for duplicate dependencies
+        run: |
+          echo "## Duplicate Dependencies" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cargo tree --duplicates >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  # Go audit
+  go-audit:
+    name: Go Dependency Audit
+    runs-on: ubuntu-latest
+    if: hashFiles('**/go.mod') != ''
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Check for outdated packages
+        run: |
+          echo "## Outdated Packages" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          go list -u -m all >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Run govulncheck
+        run: |
+          echo "## Security Vulnerabilities" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          govulncheck ./... >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Verify dependencies
+        run: |
+          echo "## Dependency Verification" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          go mod verify >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  # PHP audit
+  php-audit:
+    name: PHP Dependency Audit
+    runs-on: ubuntu-latest
+    if: hashFiles('**/composer.json') != ''
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Check for outdated packages
+        run: |
+          echo "## Outdated Packages" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          composer outdated --direct >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Validate composer files
+        run: |
+          echo "## Validation" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          composer validate >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  # Snyk Security Scan (Multi-language)
+  snyk-audit:
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --all-projects --severity-threshold=medium
+
+  # Dependency Review (GitHub native)
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+          warn-on-openssf-scorecard-level: 3
+
+  # Create issue for vulnerabilities found
+  create-issue:
+    name: Create Issue for Vulnerabilities
+    runs-on: ubuntu-latest
+    needs: [nodejs-audit, python-audit, rust-audit, go-audit, php-audit]
+    if: failure() && github.event_name == 'schedule'
+
+    steps:
+      - name: Create issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🔒 Weekly Dependency Audit Found Issues',
+              body: `The automated dependency audit has detected issues that need attention.\n\nPlease review the [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) for details.\n\n**Action Required:**\n- Review security vulnerabilities\n- Update outdated packages\n- Address any audit failures`,
+              labels: ['security', 'dependencies', 'automated']
+            });
+            console.log(`Created issue #${issue.data.number}`);

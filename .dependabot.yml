@@ -1,0 +1,133 @@
+# Dependabot configuration for automated dependency updates
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
+
+version: 2
+
+updates:
+  # Node.js dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "your-team/reviewers"
+    labels:
+      - "dependencies"
+      - "javascript"
+    commit-message:
+      prefix: "npm"
+      include: "scope"
+    # Group updates to reduce PR noise
+    groups:
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "your-team/reviewers"
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "pip"
+
+  # Rust dependencies
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "your-team/reviewers"
+    labels:
+      - "dependencies"
+      - "rust"
+    commit-message:
+      prefix: "cargo"
+
+  # Go dependencies
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "your-team/reviewers"
+    labels:
+      - "dependencies"
+      - "go"
+    commit-message:
+      prefix: "go"
+
+  # PHP dependencies
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "your-team/reviewers"
+    labels:
+      - "dependencies"
+      - "php"
+    commit-message:
+      prefix: "composer"
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "your-team/reviewers"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "your-team/reviewers"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+
+# Security updates configuration
+# Dependabot will automatically open PRs for security updates
+# regardless of the schedule above

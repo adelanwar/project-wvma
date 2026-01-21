@@ -1,0 +1,243 @@
+/* Calendar Styles */
+
+.calendar {
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 16px var(--shadow-medium);
+  overflow: hidden;
+}
+
+/* Calendar Header */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--month-header-bg);
+  color: var(--month-header-text);
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  color: var(--text-on-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.nav-btn:active {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.today-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.calendar-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Calendar Grid */
+.calendar-grid-container {
+  padding: var(--spacing-sm);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: var(--spacing-sm);
+}
+
+.weekday-cell {
+  padding: var(--spacing-sm);
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+/* Calendar Day */
+.calendar-day {
+  min-height: 100px;
+  padding: var(--spacing-sm);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-day:hover {
+  background-color: var(--hover-bg);
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.calendar-day:focus-visible {
+  outline: 2px solid var(--focus-outline);
+  outline-offset: -2px;
+}
+
+.calendar-day.other-month {
+  background-color: var(--bg-tertiary);
+  opacity: 0.6;
+}
+
+.calendar-day.other-month .day-number {
+  color: var(--text-muted);
+}
+
+.calendar-day.today {
+  background-color: var(--current-day-bg);
+  border-color: var(--current-day);
+  border-width: 2px;
+}
+
+.calendar-day.today .day-number {
+  color: var(--current-day);
+  font-weight: 700;
+}
+
+.day-number {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Meetings in Day Cell */
+.day-meetings {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.meeting-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.meeting-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+.meeting-bod {
+  background-color: var(--bod-bg);
+  color: var(--bod-color);
+  border-left: 3px solid var(--bod-border);
+}
+
+.meeting-bot {
+  background-color: var(--bot-bg);
+  color: var(--bot-color);
+  border-left: 3px solid var(--bot-border);
+}
+
+.meeting-type {
+  font-weight: 700;
+  min-width: 28px;
+}
+
+.meeting-time {
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.more-meetings {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  font-style: italic;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .calendar-day {
+    min-height: 90px;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-header {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .calendar-title {
+    font-size: 1.25rem;
+  }
+
+  .calendar-day {
+    min-height: 70px;
+    padding: var(--spacing-xs);
+  }
+
+  .day-number {
+    font-size: 0.75rem;
+  }
+
+  .meeting-badge {
+    padding: 1px 4px;
+    font-size: 0.6rem;
+  }
+
+  .meeting-type {
+    min-width: 24px;
+  }
+
+  .weekday-cell {
+    font-size: 0.75rem;
+    padding: var(--spacing-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-day {
+    min-height: 55px;
+  }
+
+  .meeting-time {
+    display: none;
+  }
+
+  .more-meetings {
+    font-size: 0.6rem;
+    padding: 1px 4px;
+  }
+}

@@ -1,0 +1,124 @@
+/* WVMA Calendar - Global Styles */
+
+:root {
+  /* Base Colors */
+  --bg-primary: #f4ece2;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e8dcc8;
+
+  --primary: #1e5449;
+  --primary-light: #2d7a6b;
+  --primary-dark: #15403a;
+  --primary-subtle: #d4e8e4;
+
+  /* Meeting Type Colors */
+  --bod-color: #2d7a6b;
+  --bod-bg: #d4e8e4;
+  --bod-border: #1e5449;
+
+  --bot-color: #8b6f47;
+  --bot-bg: #f0e6d2;
+  --bot-border: #6d5638;
+
+  /* Text Colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-muted: #808080;
+  --text-on-primary: #ffffff;
+  --text-on-dark: #f4ece2;
+
+  /* Accent Colors */
+  --accent-1: #c67b5c;
+  --accent-2: #4a7c7e;
+  --accent-3: #a68a64;
+  --current-day: #c67b5c;
+  --current-day-bg: #fdf5f0;
+
+  /* UI Elements */
+  --border-light: #e0d4c0;
+  --border-medium: #c9baa0;
+  --border-dark: #1e5449;
+
+  --shadow-light: rgba(30, 84, 73, 0.05);
+  --shadow-medium: rgba(30, 84, 73, 0.10);
+  --shadow-dark: rgba(30, 84, 73, 0.20);
+
+  /* Interactive States */
+  --hover-bg: #e8dcc8;
+  --active-bg: #ddd0b8;
+  --focus-outline: #2d7a6b;
+
+  /* Month Headers */
+  --month-header-bg: #1e5449;
+  --month-header-text: #ffffff;
+  --month-header-accent: #8b6f47;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--focus-outline);
+  outline-offset: 2px;
+}
+
+/* Utility Classes */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

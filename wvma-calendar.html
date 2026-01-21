@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WVMA Board Meeting Calendar - Track Board of Directors and Board of Trustees meetings">
+  <title>WVMA Calendar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== CSS Variables - WVMA Color Palette ===== */
+    :root {
+      /* Base Colors */
+      --bg-primary: #f4ece2;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #e8dcc8;
+
+      --primary: #1e5449;
+      --primary-light: #2d7a6b;
+      --primary-dark: #15403a;
+      --primary-subtle: #d4e8e4;
+
+      /* Meeting Type Colors */
+      --bod-color: #2d7a6b;
+      --bod-bg: #d4e8e4;
+      --bod-border: #1e5449;
+
+      --bot-color: #8b6f47;
+      --bot-bg: #f0e6d2;
+      --bot-border: #6d5638;
+
+      /* Text Colors */
+      --text-primary: #1a1a1a;
+      --text-secondary: #4a4a4a;
+      --text-muted: #808080;
+      --text-on-primary: #ffffff;
+
+      /* Accent Colors */
+      --current-day: #c67b5c;
+      --current-day-bg: #fdf5f0;
+
+      /* UI Elements */
+      --border-light: #e0d4c0;
+      --border-medium: #c9baa0;
+      --hover-bg: #e8dcc8;
+      --focus-outline: #2d7a6b;
+
+      /* Shadows */
+      --shadow-light: rgba(30, 84, 73, 0.05);
+      --shadow-medium: rgba(30, 84, 73, 0.10);
+      --shadow-dark: rgba(30, 84, 73, 0.20);
+
+      /* Spacing */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+
+      /* Border Radius */
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    /* ===== Reset & Base Styles ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    /* ===== App Layout ===== */
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-main {
+      flex: 1;
+      padding: var(--spacing-lg);
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      background-color: var(--primary);
+      color: var(--text-on-primary);
+      padding: var(--spacing-md) var(--spacing-lg);
+      box-shadow: 0 2px 8px var(--shadow-dark);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: baseline;
+      gap: var(--spacing-md);
+    }
+
+    .header-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .header-subtitle {
+      font-size: 1rem;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    .header-legend {
+      display: flex;
+      gap: var(--spacing-lg);
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-size: 0.875rem;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .legend-bod .legend-dot {
+      background-color: var(--bod-bg);
+      border: 2px solid var(--primary-light);
+    }
+
+    .legend-bot .legend-dot {
+      background-color: var(--bot-bg);
+      border: 2px solid var(--bot-color);
+    }
+
+    /* ===== Calendar ===== */
+    .calendar {
+      background-color: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 16px var(--shadow-medium);
+      overflow: hidden;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-md) var(--spacing-lg);
+      background-color: var(--primary);
+      color: var(--text-on-primary);
+    }
+
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-sm);
+      border-radius: var(--radius-md);
+      color: var(--text-on-primary);
+      transition: background-color 0.15s ease;
+      font-size: 1.25rem;
+    }
+
+    .nav-btn:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .today-btn {
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .calendar-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .calendar-grid-container {
+      padding: var(--spacing-sm);
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .weekday-cell {
+      padding: var(--spacing-sm);
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+
+    /* ===== Calendar Day ===== */
+    .calendar-day {
+      min-height: 100px;
+      padding: var(--spacing-sm);
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calendar-day:hover {
+      background-color: var(--hover-bg);
+      box-shadow: 0 2px 8px var(--shadow-light);
+    }
+
+    .calendar-day.other-month {
+      background-color: var(--bg-tertiary);
+      opacity: 0.6;
+    }
+
+    .calendar-day.other-month .day-number {
+      color: var(--text-muted);
+    }
+
+    .calendar-day.today {
+      background-color: var(--current-day-bg);
+      border-color: var(--current-day);
+      border-width: 2px;
+    }
+
+    .calendar-day.today .day-number {
+      color: var(--current-day);
+      font-weight: 700;
+    }
+
+    .day-number {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .day-meetings {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ===== Meeting Badge ===== */
+    .meeting-badge {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .meeting-badge:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px var(--shadow-light);
+    }
+
+    .meeting-bod {
+      background-color: var(--bod-bg);
+      color: var(--bod-color);
+      border-left: 3px solid var(--bod-border);
+    }
+
+    .meeting-bot {
+      background-color: var(--bot-bg);
+      color: var(--bot-color);
+      border-left: 3px solid var(--bot-border);
+    }
+
+    .meeting-type {
+      font-weight: 700;
+      min-width: 28px;
+    }
+
+    .meeting-time {
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    .more-meetings {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      padding: 2px 6px;
+      font-style: italic;
+    }
+
+    /* ===== Modal ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: var(--spacing-md);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background-color: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px var(--shadow-dark);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow: auto;
+      transform: scale(0.9);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .modal-header.bod {
+      background-color: var(--bod-bg);
+      border-bottom-color: var(--bod-border);
+    }
+
+    .modal-header.bot {
+      background-color: var(--bot-bg);
+      border-bottom-color: var(--bot-border);
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .modal-close {
+      font-size: 1.5rem;
+      color: var(--text-secondary);
+      padding: var(--spacing-xs);
+      border-radius: var(--radius-sm);
+      transition: background-color 0.15s ease;
+    }
+
+    .modal-close:hover {
+      background-color: var(--hover-bg);
+    }
+
+    .modal-body {
+      padding: var(--spacing-lg);
+    }
+
+    .form-group {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: var(--spacing-xs);
+      color: var(--text-secondary);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--focus-outline);
+      box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      justify-content: flex-end;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-top: 1px solid var(--border-light);
+      background-color: var(--bg-tertiary);
+    }
+
+    .btn {
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--text-on-primary);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-light);
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-medium);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--hover-bg);
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .meeting-detail {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .meeting-detail-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .meeting-detail-value {
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    /* ===== Loading State ===== */
+    .loading-indicator {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--text-muted);
+    }
+
+    .error-message {
+      background-color: #fee;
+      border: 1px solid #fcc;
+      color: #c00;
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-md);
+    }
+
+    /* ===== Responsive Styles ===== */
+    @media (max-width: 768px) {
+      .header {
+        padding: var(--spacing-md);
+      }
+
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-brand {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+      }
+
+      .header-title {
+        font-size: 1.5rem;
+      }
+
+      .app-main {
+        padding: var(--spacing-md);
+      }
+
+      .calendar-header {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+      }
+
+      .calendar-title {
+        font-size: 1.25rem;
+      }
+
+      .calendar-day {
+        min-height: 70px;
+        padding: var(--spacing-xs);
+      }
+
+      .day-number {
+        font-size: 0.75rem;
+      }
+
+      .meeting-badge {
+        padding: 1px 4px;
+        font-size: 0.6rem;
+      }
+
+      .weekday-cell {
+        font-size: 0.75rem;
+        padding: var(--spacing-xs);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .app-main {
+        padding: var(--spacing-sm);
+      }
+
+      .calendar-day {
+        min-height: 55px;
+      }
+
+      .meeting-time {
+        display: none;
+      }
+
+      .weekday-cell {
+        font-size: 0.65rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="header-brand">
+          <h1 class="header-title">WVMA Calendar</h1>
+          <span class="header-subtitle">Board Meeting Schedule</span>
+        </div>
+        <div class="header-legend">
+          <div class="legend-item legend-bod">
+            <span class="legend-dot"></span>
+            <span class="legend-label">Board of Directors</span>
+          </div>
+          <div class="legend-item legend-bot">
+            <span class="legend-dot"></span>
+            <span class="legend-label">Board of Trustees</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <div class="calendar">
+        <div class="calendar-header">
+          <div class="calendar-nav">
+            <button class="nav-btn" id="prevMonth" title="Previous month">&larr;</button>
+            <button class="nav-btn today-btn" id="todayBtn">Today</button>
+            <button class="nav-btn" id="nextMonth" title="Next month">&rarr;</button>
+          </div>
+          <h2 class="calendar-title" id="monthTitle"></h2>
+          <button class="btn btn-primary" id="addMeetingBtn">+ Add Meeting</button>
+        </div>
+        <div class="calendar-grid-container">
+          <div class="calendar-weekdays">
+            <div class="weekday-cell">Sun</div>
+            <div class="weekday-cell">Mon</div>
+            <div class="weekday-cell">Tue</div>
+            <div class="weekday-cell">Wed</div>
+            <div class="weekday-cell">Thu</div>
+            <div class="weekday-cell">Fri</div>
+            <div class="weekday-cell">Sat</div>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header" id="modalHeader">
+        <h3 class="modal-title" id="modalTitle">Meeting Details</h3>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <script>
+    // ===== WVMA Calendar Application =====
+
+    // ===== Configuration =====
+    // To use Google Sheets, set your published sheet URL here:
+    const GOOGLE_SHEETS_URL = ''; // Leave empty to use sample data
+
+    // ===== State =====
+    let currentDate = new Date();
+    let meetings = [];
+    let selectedMeeting = null;
+    let modalMode = 'view'; // 'view', 'add', 'edit'
+
+    // ===== Sample Data (used when Google Sheets is not configured) =====
+    const sampleMeetings = [
+      {
+        id: '1',
+        title: 'Monthly BOD Meeting',
+        type: 'BOD',
+        date: formatDateString(new Date()),
+        time: '10:00 AM',
+        location: 'Conference Room A',
+        description: 'Regular monthly board meeting to discuss operations.'
+      },
+      {
+        id: '2',
+        title: 'Quarterly BOT Review',
+        type: 'BOT',
+        date: formatDateString(addDays(new Date(), 7)),
+        time: '2:00 PM',
+        location: 'Main Hall',
+        description: 'Quarterly financial review and planning session.'
+      },
+      {
+        id: '3',
+        title: 'BOD Strategic Planning',
+        type: 'BOD',
+        date: formatDateString(addDays(new Date(), 14)),
+        time: '9:00 AM',
+        location: 'Executive Suite',
+        description: 'Annual strategic planning meeting.'
+      },
+      {
+        id: '4',
+        title: 'BOT Budget Meeting',
+        type: 'BOT',
+        date: formatDateString(addDays(new Date(), 21)),
+        time: '11:00 AM',
+        location: 'Finance Office',
+        description: 'Budget approval for upcoming quarter.'
+      }
+    ];
+
+    // ===== Utility Functions =====
+    function formatDateString(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function addDays(date, days) {
+      const result = new Date(date);
+      result.setDate(result.getDate() + days);
+      return result;
+    }
+
+    function formatDisplayDate(dateString) {
+      const date = new Date(dateString + 'T00:00:00');
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    function getMonthName(date) {
+      return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
+
+    function isSameDay(date1, date2) {
+      return date1.getFullYear() === date2.getFullYear() &&
+             date1.getMonth() === date2.getMonth() &&
+             date1.getDate() === date2.getDate();
+    }
+
+    function isToday(date) {
+      return isSameDay(date, new Date());
+    }
+
+    // ===== Data Loading =====
+    async function loadMeetings() {
+      if (GOOGLE_SHEETS_URL) {
+        try {
+          const response = await fetch(GOOGLE_SHEETS_URL);
+          const text = await response.text();
+          meetings = parseCSV(text);
+        } catch (error) {
+          console.error('Error loading from Google Sheets:', error);
+          meetings = sampleMeetings;
+        }
+      } else {
+        meetings = sampleMeetings;
+      }
+      renderCalendar();
+    }
+
+    function parseCSV(csvText) {
+      const lines = csvText.trim().split('\n');
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+
+      return lines.slice(1).map((line, index) => {
+        const values = parseCSVLine(line);
+        const meeting = { id: String(index + 1) };
+
+        headers.forEach((header, i) => {
+          const value = values[i] || '';
+          if (header === 'title') meeting.title = value;
+          else if (header === 'type') meeting.type = value.toUpperCase();
+          else if (header === 'date') meeting.date = value;
+          else if (header === 'time') meeting.time = value;
+          else if (header === 'location') meeting.location = value;
+          else if (header === 'description') meeting.description = value;
+        });
+
+        return meeting;
+      }).filter(m => m.title && m.date);
+    }
+
+    function parseCSVLine(line) {
+      const values = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          values.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim());
+      return values;
+    }
+
+    function getMeetingsForDate(dateString) {
+      return meetings.filter(m => m.date === dateString);
+    }
+
+    // ===== Calendar Rendering =====
+    function renderCalendar() {
+      const monthTitle = document.getElementById('monthTitle');
+      const calendarGrid = document.getElementById('calendarGrid');
+
+      monthTitle.textContent = getMonthName(currentDate);
+
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+      const days = [];
+      const current = new Date(startDate);
+
+      while (current <= lastDay || current.getDay() !== 0) {
+        days.push(new Date(current));
+        current.setDate(current.getDate() + 1);
+        if (days.length >= 42) break; // Max 6 weeks
+      }
+
+      calendarGrid.innerHTML = days.map(date => {
+        const dateString = formatDateString(date);
+        const dayMeetings = getMeetingsForDate(dateString);
+        const isCurrentMonth = date.getMonth() === month;
+        const isTodayDate = isToday(date);
+
+        let classes = 'calendar-day';
+        if (!isCurrentMonth) classes += ' other-month';
+        if (isTodayDate) classes += ' today';
+
+        return `
+          <div class="${classes}" data-date="${dateString}" onclick="handleDayClick('${dateString}')">
+            <span class="day-number">${date.getDate()}</span>
+            <div class="day-meetings">
+              ${dayMeetings.slice(0, 2).map(meeting => `
+                <div class="meeting-badge meeting-${meeting.type.toLowerCase()}"
+                     onclick="event.stopPropagation(); showMeetingDetails('${meeting.id}')">
+                  <span class="meeting-type">${meeting.type}</span>
+                  <span class="meeting-time">${meeting.time || ''}</span>
+                </div>
+              `).join('')}
+              ${dayMeetings.length > 2 ? `<span class="more-meetings">+${dayMeetings.length - 2} more</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ===== Navigation =====
+    function goToPreviousMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    }
+
+    function goToNextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    }
+
+    function goToToday() {
+      currentDate = new Date();
+      renderCalendar();
+    }
+
+    // ===== Modal Functions =====
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      selectedMeeting = null;
+      modalMode = 'view';
+    }
+
+    function handleDayClick(dateString) {
+      const dayMeetings = getMeetingsForDate(dateString);
+      if (dayMeetings.length === 1) {
+        showMeetingDetails(dayMeetings[0].id);
+      } else if (dayMeetings.length > 1) {
+        showDayMeetingsList(dateString, dayMeetings);
+      } else {
+        showAddMeetingForm(dateString);
+      }
+    }
+
+    function showMeetingDetails(meetingId) {
+      selectedMeeting = meetings.find(m => m.id === meetingId);
+      if (!selectedMeeting) return;
+
+      modalMode = 'view';
+      const header = document.getElementById('modalHeader');
+      const body = document.getElementById('modalBody');
+      const actions = document.getElementById('modalActions');
+
+      header.className = `modal-header ${selectedMeeting.type.toLowerCase()}`;
+      document.getElementById('modalTitle').textContent = selectedMeeting.title;
+
+      body.innerHTML = `
+        <div class="meeting-detail">
+          <div class="meeting-detail-label">Type</div>
+          <div class="meeting-detail-value">${selectedMeeting.type === 'BOD' ? 'Board of Directors' : 'Board of Trustees'}</div>
+        </div>
+        <div class="meeting-detail">
+          <div class="meeting-detail-label">Date</div>
+          <div class="meeting-detail-value">${formatDisplayDate(selectedMeeting.date)}</div>
+        </div>
+        ${selectedMeeting.time ? `
+        <div class="meeting-detail">
+          <div class="meeting-detail-label">Time</div>
+          <div class="meeting-detail-value">${selectedMeeting.time}</div>
+        </div>` : ''}
+        ${selectedMeeting.location ? `
+        <div class="meeting-detail">
+          <div class="meeting-detail-label">Location</div>
+          <div class="meeting-detail-value">${selectedMeeting.location}</div>
+        </div>` : ''}
+        ${selectedMeeting.description ? `
+        <div class="meeting-detail">
+          <div class="meeting-detail-label">Description</div>
+          <div class="meeting-detail-value">${selectedMeeting.description}</div>
+        </div>` : ''}
+      `;
+
+      actions.innerHTML = `
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        <button class="btn btn-primary" onclick="showEditMeetingForm()">Edit</button>
+      `;
+
+      openModal();
+    }
+
+    function showDayMeetingsList(dateString, dayMeetings) {
+      const header = document.getElementById('modalHeader');
+      const body = document.getElementById('modalBody');
+      const actions = document.getElementById('modalActions');
+
+      header.className = 'modal-header';
+      document.getElementById('modalTitle').textContent = formatDisplayDate(dateString);
+
+      body.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+          ${dayMeetings.map(meeting => `
+            <div class="meeting-badge meeting-${meeting.type.toLowerCase()}"
+                 style="padding: var(--spacing-sm) var(--spacing-md); cursor: pointer;"
+                 onclick="showMeetingDetails('${meeting.id}')">
+              <span class="meeting-type">${meeting.type}</span>
+              <span style="flex: 1;">${meeting.title}</span>
+              <span class="meeting-time">${meeting.time || ''}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      actions.innerHTML = `
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        <button class="btn btn-primary" onclick="showAddMeetingForm('${dateString}')">+ Add Meeting</button>
+      `;
+
+      openModal();
+    }
+
+    function showAddMeetingForm(dateString = '') {
+      modalMode = 'add';
+      const header = document.getElementById('modalHeader');
+      const body = document.getElementById('modalBody');
+      const actions = document.getElementById('modalActions');
+
+      header.className = 'modal-header';
+      document.getElementById('modalTitle').textContent = 'Add New Meeting';
+
+      body.innerHTML = getMeetingFormHTML({
+        date: dateString || formatDateString(currentDate),
+        type: 'BOD'
+      });
+
+      actions.innerHTML = `
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveMeeting()">Save Meeting</button>
+      `;
+
+      openModal();
+    }
+
+    function showEditMeetingForm() {
+      if (!selectedMeeting) return;
+
+      modalMode = 'edit';
+      const body = document.getElementById('modalBody');
+      const actions = document.getElementById('modalActions');
+
+      document.getElementById('modalTitle').textContent = 'Edit Meeting';
+
+      body.innerHTML = getMeetingFormHTML(selectedMeeting);
+
+      actions.innerHTML = `
+        <button class="btn btn-danger" onclick="deleteMeeting()">Delete</button>
+        <button class="btn btn-secondary" onclick="showMeetingDetails('${selectedMeeting.id}')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveMeeting()">Save Changes</button>
+      `;
+    }
+
+    function getMeetingFormHTML(meeting = {}) {
+      return `
+        <div class="form-group">
+          <label class="form-label" for="meetingTitle">Title *</label>
+          <input type="text" class="form-input" id="meetingTitle" value="${meeting.title || ''}" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="meetingType">Type *</label>
+          <select class="form-select" id="meetingType">
+            <option value="BOD" ${meeting.type === 'BOD' ? 'selected' : ''}>Board of Directors (BOD)</option>
+            <option value="BOT" ${meeting.type === 'BOT' ? 'selected' : ''}>Board of Trustees (BOT)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="meetingDate">Date *</label>
+          <input type="date" class="form-input" id="meetingDate" value="${meeting.date || ''}" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="meetingTime">Time</label>
+          <input type="text" class="form-input" id="meetingTime" value="${meeting.time || ''}" placeholder="e.g., 10:00 AM">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="meetingLocation">Location</label>
+          <input type="text" class="form-input" id="meetingLocation" value="${meeting.location || ''}" placeholder="e.g., Conference Room A">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="meetingDescription">Description</label>
+          <textarea class="form-textarea" id="meetingDescription" placeholder="Meeting details...">${meeting.description || ''}</textarea>
+        </div>
+      `;
+    }
+
+    function saveMeeting() {
+      const title = document.getElementById('meetingTitle').value.trim();
+      const type = document.getElementById('meetingType').value;
+      const date = document.getElementById('meetingDate').value;
+      const time = document.getElementById('meetingTime').value.trim();
+      const location = document.getElementById('meetingLocation').value.trim();
+      const description = document.getElementById('meetingDescription').value.trim();
+
+      if (!title || !date) {
+        alert('Please fill in required fields (Title and Date)');
+        return;
+      }
+
+      if (modalMode === 'add') {
+        const newMeeting = {
+          id: String(Date.now()),
+          title,
+          type,
+          date,
+          time,
+          location,
+          description
+        };
+        meetings.push(newMeeting);
+      } else if (modalMode === 'edit' && selectedMeeting) {
+        const index = meetings.findIndex(m => m.id === selectedMeeting.id);
+        if (index !== -1) {
+          meetings[index] = { ...meetings[index], title, type, date, time, location, description };
+        }
+      }
+
+      renderCalendar();
+      closeModal();
+    }
+
+    function deleteMeeting() {
+      if (!selectedMeeting) return;
+
+      if (confirm('Are you sure you want to delete this meeting?')) {
+        meetings = meetings.filter(m => m.id !== selectedMeeting.id);
+        renderCalendar();
+        closeModal();
+      }
+    }
+
+    // ===== Event Listeners =====
+    document.getElementById('prevMonth').addEventListener('click', goToPreviousMonth);
+    document.getElementById('nextMonth').addEventListener('click', goToNextMonth);
+    document.getElementById('todayBtn').addEventListener('click', goToToday);
+    document.getElementById('addMeetingBtn').addEventListener('click', () => showAddMeetingForm());
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // ===== Initialize =====
+    loadMeetings();
+  </script>
+</body>
+</html>

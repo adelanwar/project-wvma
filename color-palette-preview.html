@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WVMA Color Palette Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f4ece2;
+            padding: 2rem;
+            color: #1a1a1a;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #1e5449;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            color: #1e5449;
+            margin: 2rem 0 1rem;
+            font-size: 1.5rem;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .color-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(30, 84, 73, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .color-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(30, 84, 73, 0.15);
+        }
+
+        .color-swatch {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .color-info {
+            padding: 1rem;
+        }
+
+        .color-name {
+            font-weight: 600;
+            color: #1e5449;
+            margin-bottom: 0.25rem;
+        }
+
+        .color-hex {
+            font-family: 'Courier New', monospace;
+            color: #4a4a4a;
+            font-size: 0.9rem;
+        }
+
+        .color-usage {
+            font-size: 0.85rem;
+            color: #808080;
+            margin-top: 0.5rem;
+        }
+
+        /* Calendar Preview */
+        .calendar-preview {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(30, 84, 73, 0.1);
+            margin-top: 2rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .calendar-cell {
+            background: white;
+            border: 1px solid #e0d4c0;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-cell.bod {
+            background: #d4e8e4;
+            border: 2px solid #1e5449;
+        }
+
+        .calendar-cell.bot {
+            background: #f0e6d2;
+            border: 2px solid #6d5638;
+        }
+
+        .calendar-cell.current {
+            background: #fdf5f0;
+            border: 2px solid #c67b5c;
+        }
+
+        .day-abbr {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #808080;
+            margin-bottom: 0.25rem;
+        }
+
+        .day-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .meeting-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        .meeting-label.bod {
+            background: #1e5449;
+            color: white;
+        }
+
+        .meeting-label.bot {
+            background: #8b6f47;
+            color: white;
+        }
+
+        .month-header {
+            background: #1e5449;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 WVMA Calendar Color Palette</h1>
+
+        <h2>Base Brand Colors</h2>
+        <div class="color-grid">
+            <div class="color-card">
+                <div class="color-swatch" style="background: #f4ece2; color: #1e5449;">
+                    Aa
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Background Primary</div>
+                    <div class="color-hex">#f4ece2</div>
+                    <div class="color-usage">Main page background</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: #1e5449; color: white;">
+                    Aa
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Primary Brand</div>
+                    <div class="color-hex">#1e5449</div>
+                    <div class="color-usage">Headers, main actions</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: #2d7a6b; color: white;">
+                    Aa
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Primary Light</div>
+                    <div class="color-hex">#2d7a6b</div>
+                    <div class="color-usage">Hover states, BOD meetings</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: #ffffff; color: #1e5449; border: 2px solid #e0d4c0;">
+                    Aa
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Background Secondary</div>
+                    <div class="color-hex">#ffffff</div>
+                    <div class="color-usage">Calendar cells, cards</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Board of Directors (BOD) Colors</h2>
+        <div class="color-grid">
+            <div class="color-card">
+                <div class="color-swatch" style="background: #d4e8e4; color: #1e5449;">
+                    BOD Meeting
+                </div>
+                <div class="color-info">
+                    <div class="color-name">BOD Background</div>
+                    <div class="color-hex">#d4e8e4</div>
+                    <div class="color-usage">BOD meeting cell background</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: #2d7a6b; color: white;">
+                    BOD
+                </div>
+                <div class="color-info">
+                    <div class="color-name">BOD Color</div>
+                    <div class="color-hex">#2d7a6b</div>
+                    <div class="color-usage">BOD text and accents</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: white; border: 3px solid #1e5449; color: #1e5449;">
+                    BOD
+                </div>
+                <div class="color-info">
+                    <div class="color-name">BOD Border</div>
+                    <div class="color-hex">#1e5449</div>
+                    <div class="color-usage">BOD cell border</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Board of Trustees (BOT) Colors</h2>
+        <div class="color-grid">
+            <div class="color-card">
+                <div class="color-swatch" style="background: #f0e6d2; color: #6d5638;">
+                    BOT Meeting
+                </div>
+                <div class="color-info">
+                    <div class="color-name">BOT Background</div>
+                    <div class="color-hex">#f0e6d2</div>
+                    <div class="color-usage">BOT meeting cell background</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: #8b6f47; color: white;">
+                    BOT
+                </div>
+                <div class="color-info">
+                    <div class="color-name">BOT Color</div>
+                    <div class="color-hex">#8b6f47</div>
+                    <div class="color-usage">BOT text and accents</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: white; border: 3px solid #6d5638; color: #6d5638;">
+                    BOT
+                </div>
+                <div class="color-info">
+                    <div class="color-name">BOT Border</div>
+                    <div class="color-hex">#6d5638</div>
+                    <div class="color-usage">BOT cell border</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Accent & UI Colors</h2>
+        <div class="color-grid">
+            <div class="color-card">
+                <div class="color-swatch" style="background: #c67b5c; color: white;">
+                    Today
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Current Day</div>
+                    <div class="color-hex">#c67b5c</div>
+                    <div class="color-usage">Current date highlight</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: #e0d4c0; color: #1e5449;">
+                    Border
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Border Light</div>
+                    <div class="color-hex">#e0d4c0</div>
+                    <div class="color-usage">Cell borders, dividers</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: #1a1a1a; color: white;">
+                    Aa Text
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Text Primary</div>
+                    <div class="color-hex">#1a1a1a</div>
+                    <div class="color-usage">Main text content</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background: #808080; color: white;">
+                    Aa Text
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Text Muted</div>
+                    <div class="color-hex">#808080</div>
+                    <div class="color-usage">Secondary text, day labels</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Calendar Preview</h2>
+        <div class="calendar-preview">
+            <div class="month-header">January 2026</div>
+            <div class="calendar-grid">
+                <div class="calendar-cell">
+                    <div class="day-abbr">S</div>
+                    <div class="day-number">12</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">M</div>
+                    <div class="day-number">13</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">T</div>
+                    <div class="day-number">14</div>
+                </div>
+                <div class="calendar-cell bod">
+                    <div class="day-abbr">W</div>
+                    <div class="day-number">15</div>
+                    <div class="meeting-label bod">BOD</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">T</div>
+                    <div class="day-number">16</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">F</div>
+                    <div class="day-number">17</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">S</div>
+                    <div class="day-number">18</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">S</div>
+                    <div class="day-number">19</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">M</div>
+                    <div class="day-number">20</div>
+                </div>
+                <div class="calendar-cell current">
+                    <div class="day-abbr">T</div>
+                    <div class="day-number">21</div>
+                </div>
+                <div class="calendar-cell bot">
+                    <div class="day-abbr">W</div>
+                    <div class="day-number">22</div>
+                    <div class="meeting-label bot">BOT</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">T</div>
+                    <div class="day-number">23</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">F</div>
+                    <div class="day-number">24</div>
+                </div>
+                <div class="calendar-cell">
+                    <div class="day-abbr">S</div>
+                    <div class="day-number">25</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
